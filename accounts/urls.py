@@ -6,8 +6,8 @@ from django.conf.urls.static import static
 app_name = 'accounts'
 
 urlpatterns = [
-    path('', views.index, name='registration'),
-
+    path('', views.user_login, name='user_login'),
+    path('registration/', views.index, name='registration'),
     # URL patterns for purchase requisitions
     path('purchase-requisitions/', views.purchase_requisition_list, name='purchase_requisition_list'),
     path('purchase-requisitions/<int:pk>/', views.purchase_requisition_detail, name='purchase_requisition_detail'),
@@ -18,8 +18,7 @@ urlpatterns = [
     # New URL patterns for delete and print actions
     path('purchase-requisitions/remove/<int:pk>/', views.remove_purchase_requisition, name='remove_purchase_requisition'),
     path('purchase-requisitions/print/<int:pk>/', views.print_purchase_requisition, name='print_purchase_requisition'),
-    path('get-units/', views.get_units, name='get_units'),
-    path('login/', views.user_login, name='user_login'),
+    path('get-units/', views.get_units, name='get_units'),    
     path('user-logout/', views.user_logout, name='user_logout'), 
 ]
 

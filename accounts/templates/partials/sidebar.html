@@ -28,28 +28,12 @@
             <span class="text">Dashboard</span>
           </a>
           <ul id="ddmenu_1" class="collapse show dropdown-nav">
-            <!-- <li>
-              <a href="#">Overview </a>
-            </li> -->
-            {% if request.user.groups.all.0.name  == 'Security' or request.user.groups.all.0.name == 'Supervisor'  %}
             <li>
-              <a href="#" {% if request.path == "/record-visitor/" %} class="active" {% endif %}> Record Visitor </a>
-            </li>            
-            <li>
-              <a href="#" {% if request.path == "/visitor-list/" %} class="active" {% endif %}> Waiting List </a>
+              <a href="{% url 'accounts:registration' %}" class="active"> Registration </a>
             </li>
             <li>
-              <a href="#" {% if request.path == "/movements/" %} class="active" {% endif %}> Movement </a>
+              <a href="{% url 'accounts:purchase_requisition_list' %}" > purchase requisition list </a>
             </li>
-            {% endif %}
-            {% if request.user.groups.all.0.name == 'Supervisor'  %}
-            <li>
-              <a href="#" {% if request.path == "/all-visitors/" %} class="active" {% endif %}> All Visitors </a>
-            </li>
-            <li>
-              <a href="#" {% if request.path == "/logs/" %} class="active" {% endif %}> Logs </a>
-            </li>
-            {% endif %}
           </ul>
         </li>
         
