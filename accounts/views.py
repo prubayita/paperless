@@ -93,10 +93,14 @@ def index(request):
         return redirect('accounts:registration')
 
     return render(request, 'paperless/registration.html', {'departments': departments})
+
+
 @login_required
 def purchase_requisition_list(request):
     purchase_requisitions = PurchaseRequisition.objects.all()
     return render(request, 'paperless/purchase_requisition_list.html', {'purchase_requisitions': purchase_requisitions})
+
+
 @login_required
 def purchase_requisition_detail(request, pk):
     print(request.POST)  # Log the POST data
@@ -144,6 +148,8 @@ def purchase_requisition_detail(request, pk):
             return redirect('accounts:purchase_requisition_list')
         
     return render(request, 'paperless/purchase_requisition_detail.html', {'purchase_requisition': purchase_requisition, 'departments': departments})
+
+
 @login_required
 def add_purchase_item(request):
     if request.method == 'POST':
@@ -175,6 +181,8 @@ def add_purchase_item(request):
             return JsonResponse({'success': False, 'message': 'Failed to add item. Please try again.'})
 
     return JsonResponse({'success': False, 'message': 'Invalid request.'})
+
+
 @login_required
 def remove_purchase_item(request, pk):
     item = get_object_or_404(PurchaseItem, pk=pk)
@@ -186,11 +194,15 @@ def remove_purchase_item(request, pk):
         requisition.save()  # Update the total_amount field
 
     return redirect('accounts:purchase_requisition_detail', pk=requisition.pk)
+
+
 @login_required
 def remove_purchase_requisition(request, pk):
     requisition = get_object_or_404(PurchaseRequisition, pk=pk)
     requisition.delete()
     return redirect('accounts:purchase_requisition_list')
+
+
 @login_required
 def print_purchase_requisition(request, pk):
     requisition = get_object_or_404(PurchaseRequisition, pk=pk)
@@ -319,10 +331,14 @@ def print_purchase_requisition(request, pk):
     response['Content-Disposition'] = f'inline; filename=PurchaseRequisition_{requisition.id}.pdf'
     return response
 
+
+
 def get_units(request):
     department_id = request.GET.get('department_id')
     units = Unit.objects.filter(department_id=department_id).values('id', 'name')
     return JsonResponse({'units': list(units)})
+
+
 
 def user_logout(request):
     logout(request)
