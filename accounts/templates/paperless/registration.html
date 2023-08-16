@@ -1,0 +1,220 @@
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'assets/css/lineicons.css' %}" />
+    <link rel="stylesheet" href="{% static 'assets/css/materialdesignicons.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'assets/css/main.css' %}" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>      
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="{% static 'assets/js/bootstrap.bundle.min.js' %}"></script>
+    <style>
+    canvas#signatureCanvas {
+        background: #fff;
+        cursor: crosshair;
+    }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">BSC Paperless</a>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ml-auto">
+                {% if user.is_authenticated %}
+                <li class="nav-item">
+                    <a class="nav-link">Logged in as {{ user.username }}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'accounts:user_logout' %}">Sign Out</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+    <div class="form-container">
+        <section class="table-components">
+            <div class="col-lg-6">
+                <div class="card-style settings-card-2 mb-30">
+                    <div class="title mb-30">
+                        <h6>Register</h6>
+                    </div>
+                    <form method="post" id="register-form" action="#">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="input-style-1">
+                                    <label for="username">Username</label>
+                                    <input type="text" placeholder="Username" name="username" id="username" required />
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="input-style-1">
+                                    <label for="password">Password</label>
+                                    <input type="password" placeholder="Password" name="password" id="password" required />
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="input-style-1">
+                                    <label for="first_name">First Name</label>
+                                    <input type="text" placeholder="First Name" name="first_name" id="first_name" required />
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="input-style-1">
+                                    <label for="last_name">Last Name</label>
+                                    <input type="text" placeholder="Last Name" name="last_name" id="last_name" required />
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="input-style-1">
+                                    <label for="email">Email</label>
+                                    <input type="email" placeholder="Email" name="email" id="email" required />
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="input-style-1">
+                                    <label>Roles</label>
+                                    <div class="col-12">
+                                        <div class="input-style-1">
+                                        
+                                            <div class="form-check checkbox-style mb-20">
+                                                <input class="form-check-input" type="checkbox" name="is_unit_manager" id="is_unit_manager">
+                                                <label class="form-check-label" for="is_unit_manager">Unit Manager</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="input-style-1">
+                                          
+                                            <div class="form-check checkbox-style mb-20">
+                                                <input class="form-check-input" type="checkbox" name="is_senior_manager" id="is_senior_manager">
+                                                <label class="form-check-label" for="is_senior_manager">Senior Manager</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="input-style-1">
+                                         
+                                            <div class="form-check checkbox-style mb-20">
+                                                <input class="form-check-input" type="checkbox" name="is_hod" id="is_hod">
+                                                <label class="form-check-label" for="is_hod">Head of Department</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="input-style-1">
+                                            <div class="form-check checkbox-style mb-20">
+                                                <input class="form-check-input" type="checkbox" name="is_ceo" id="is_ceo">
+                                                <label class="form-check-label" for="is_ceo">CEO</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="input-style-1">
+                                    <label for="signature">Draw Your Signature</label>
+                                    <canvas id="signatureCanvas" width="300" height="150"></canvas>
+                                    <button type="button" class="main-btn primary-btn btn-hover" id="clearSignature">Clear Signature</button>
+                                    <input type="hidden" id="signatureInput" name="signature" />
+                                </div>
+                            </div>
+                            
+                            <div class="col-12">
+                                    <div class="select-style-1">
+                                    <label for="department">Department</label>
+                                    <div class="select-position">
+                                    <select name="department" id="department" required>
+                                        <option value="" disabled selected>Select Department</option>
+                                        {% for dept in departments %}
+                                            <option value="{{ dept.id }}">{{ dept.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    </div>
+                                    </div>
+                                
+                            </div>
+                            <div class="col-12">
+                                <div class="select-style-1">
+                                    <label for="unit">Unit</label>
+                                    <div class="select-position">
+                                        <select name="unit" id="unit">
+                                            <option value="" disabled selected>Select Unit</option>
+                                            {% for unit in units %}
+                                                <option value="{{ unit.id }}">{{ unit.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <button class="main-btn primary-btn btn-hover">
+                                    Register
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <!-- end card -->
+            </div>
+        </section>
+    </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/signature_pad/1.3.5/signature_pad.min.js" integrity="sha512-kw/nRM/BMR2XGArXnOoxKOO5VBHLdITAW00aG8qK4zBzcLVZ4nzg7/oYCaoiwc8U9zrnsO9UHqpyljJ8+iqYiQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+    $(document).ready(function() {
+        $("#is_unit_manager").change(function() {
+            var isChecked = $(this).prop("checked");
+            $("#unit").prop("disabled", !isChecked);
+        });
+    });
+</script>
+<script>
+    $(document).ready(function() {
+        $("#department").change(function() {
+            var departmentId = $(this).val();
+            $("#unit").empty().append('<option value="" disabled selected>Select Unit</option>');
+
+            $.ajax({
+                url: "{% url 'accounts:get_units' %}",
+                method: "GET",
+                data: { department_id: departmentId },
+                success: function(data) {
+                    for (var i = 0; i < data.units.length; i++) {
+                        $("#unit").append('<option value="' + data.units[i].id + '">' + data.units[i].name + '</option>');
+                    }
+                }
+            });
+        });
+    });
+</script>
+<script>
+    var canvas = document.getElementById("signatureCanvas");
+        /*
+       function resizeCanvas() {
+           var ratio = Math.max(window.devicePixelRatio || 1, 1);
+           canvas.width = canvas.offsetWidth * ratio;
+           canvas.height = canvas.offsetHeight * ratio;
+           canvas.getContext("2d").scale(ratio, ratio);
+       }
+       window.onresize = resizeCanvas;
+       resizeCanvas();
+       */
+       //add borders to canvas
+        canvas.style.border = "2px solid #000";
+       var signaturePad = new SignaturePad(canvas, {
+       
+       });
+       document.getElementById('register-form').addEventListener('submit', () => {
+        const signatureImage = signaturePad.toDataURL();
+        document.getElementById('signatureInput').value = signatureImage;
+        });
+       document.getElementById("clearSignature").addEventListener('click', function(){
+        signaturePad.clear();
+       })
+</script>
+</body>
+</html>

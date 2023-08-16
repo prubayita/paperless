@@ -1,0 +1,185 @@
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'assets/css/lineicons.css' %}" />
+    <link rel="stylesheet" href="{% static 'assets/css/materialdesignicons.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'assets/css/main.css' %}" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>      
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="{% static 'assets/js/bootstrap.bundle.min.js' %}"></script>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">BSC Paperless</a>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ml-auto">
+                {% if user.is_authenticated %}
+                <li class="nav-item">
+                    <a class="nav-link">Logged in as {{ user.username }}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'accounts:user_logout' %}">Sign Out</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+<div id="formPopup">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Purchase Requisition Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Purchase Requisition form -->
+                <form id="purchaseRequisitionForm" method="POST" action="{% url 'accounts:purchase_requisition_detail' purchase_requisition.pk %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="department">Department:</label>
+                        <select name="department">
+                            {% for department in departments %}
+                                <option value="{{ department.id }}" {% if department.id == purchase_requisition.department.id %}selected{% endif %}>{{ department.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="reason_for_request">Reason for Request:</label>
+                        <textarea name="reason_for_request">{{ purchase_requisition.reason_for_request }}</textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="total_amount">Total Amount:</label>
+                        <input type="number" name="total_amount" value="{{ purchase_requisition.total_amount }}" id="total_amount_input">
+                    </div>                    
+                    <!-- Purchase Items table -->
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Unit Price</th>
+                                <th>Quantity</th>
+                                <th>Total Price</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in purchase_requisition.items.all %}
+                                <tr>
+                                    <td><input type="text" name="item_name_{{ item.id }}" value="{{ item.name }}"></td>
+                                    <td><input type="number" name="item_unit_price_{{ item.id }}" value="{{ item.unit_price }}"></td>
+                                    <td><input type="number" name="item_quantity_{{ item.id }}" value="{{ item.quantity }}"></td>
+                                    <td>{{ item.total_price }}</td>
+                                    <td>
+                                        <a href="{% url 'accounts:remove_purchase_item' item.pk %}" class="remove-item-button">
+                                            <i class="lni lni-trash"></i>Delete
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <button type="button" id="add-item-button" class="btn btn-primary">Add Item</button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <input type="hidden" name="itemCount" value="{{ purchase_requisition.items.count }}">
+                <button type="submit" form="purchaseRequisitionForm" class="btn btn-primary">Save Changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const formPopup = document.getElementById("formPopup");
+        const openFormPopupButtons = document.querySelectorAll(".open-form-popup");
+        const purchaseRequisitionForm = document.getElementById("purchaseRequisitionForm");
+        const addItemButton = document.getElementById("add-item-button");
+
+        openFormPopupButtons.forEach((button) => {
+            button.addEventListener("click", (event) => {
+                event.preventDefault();
+                formPopup.style.display = "block";
+            });
+        });
+
+        formPopup.addEventListener("click", (event) => {
+            if (event.target === formPopup) {
+                formPopup.style.display = "none";
+            }
+        });
+
+        // Bind AJAX request to "Add Item" button
+        addItemButton.addEventListener("click", () => {
+            const formData = new FormData();
+            formData.append("purchase_requisition_id", "{{ purchase_requisition.pk }}");
+            formData.append("item_name", "");
+            formData.append("item_unit_price", "");
+            formData.append("item_quantity", "");
+
+            // Make an AJAX request to add a new item
+            $.ajax({
+                url: "{% url 'accounts:add_purchase_item' %}",
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
+                },
+                success: function(response) {
+                    if (response.success) {
+                        console.log('Item added successfully');
+                        // Reload the page or update the relevant UI elements
+                        location.reload();
+                    } else {
+                        console.error('Failed to add item:', response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Item addition error:', error);
+                }
+            });
+        });
+    });
+    // Bind AJAX request to "Delete" buttons for purchase items
+    const removeItemButtons = document.querySelectorAll(".remove-item-button");
+    removeItemButtons.forEach((button) => {
+        button.addEventListener("click", (event) => {
+            event.preventDefault();
+            
+            // Get the URL for the item deletion view from the "href" attribute
+            const url = button.getAttribute("href");
+            
+            // Make an AJAX request to delete the item
+            $.ajax({
+                url: url,
+                type: "POST",
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
+                },
+                success: function(response) {
+                    console.log('Item deleted successfully');
+                   
+                    // Reload the page or update the relevant UI elements
+                    location.reload();
+                },
+                error: function(xhr, status, error) {
+                    console.error('Item deletion error:', error);
+                }
+            });
+        });
+    });
+    // Function to get CSRF token from cookies
+    function getCookie(name) {
+        var value = "; " + document.cookie;
+        var parts = value.split("; " + name + "=");
+        if (parts.length === 2) return parts.pop().split(";").shift();
+    }
+</script>
+
+</body>
+</html>

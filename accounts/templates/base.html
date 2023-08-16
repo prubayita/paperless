@@ -1,0 +1,100 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link
+        rel="shortcut icon"
+        href="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/BMW_logo_%28gray%29.svg/270px-BMW_logo_%28gray%29.svg.png"
+        type="image/x-icon"
+        />
+        <title>BSC Paperless App</title>
+
+        <!-- ========== All CSS files linkup ========= -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        <link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}" />
+        <link rel="stylesheet" href="{% static 'assets/css/lineicons.css' %}" />
+        <link rel="stylesheet" href="{% static 'assets/css/materialdesignicons.min.css' %}" />
+        <link rel="stylesheet" href="{% static 'assets/css/main.css' %}" />
+    
+        
+        
+    </head>
+    <body>
+        {% include 'partials/sidebar.html' %}
+        {% include 'partials/navbar.html' %}    
+        
+    
+        {% block content %}
+        
+        {% endblock content %}
+
+          <!-- ========= All Javascript files linkup ======== -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>      
+    <script src="{% static 'assets/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'assets/js/main.js' %}"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const formPopup = document.getElementById("formPopup");
+            const openFormPopupButtons = document.querySelectorAll(".open-form-popup");
+            const purchaseRequisitionForm = document.getElementById("purchaseRequisitionForm");
+            const addItemButton = document.getElementById("add-item-button");
+            const removeItemButtons = document.querySelectorAll(".remove-item-button");
+    
+            let itemCount = {{ purchase_requisition.items.count }};
+            
+            openFormPopupButtons.forEach((button) => {
+                button.addEventListener("click", (event) => {
+                    event.preventDefault();
+                    formPopup.style.display = "block";
+                });
+            });
+    
+            formPopup.addEventListener("click", (event) => {
+                if (event.target === formPopup) {
+                    formPopup.style.display = "none";
+                }
+            });
+    
+            addItemButton.addEventListener("click", () => {
+                const tableBody = purchaseRequisitionForm.querySelector("tbody");
+                const newRow = document.createElement("tr");
+                newRow.innerHTML = `
+                    <td><input type="text" name="new_item_name_${itemCount}" value=""></td>
+                    <td><input type="number" name="new_item_unit_price_${itemCount}" value=""></td>
+                    <td><input type="number" name="new_item_quantity_${itemCount}" value=""></td>
+                    <td>0.00</td>
+                    <td>
+                        <a href="#" class="remove-item-button">
+                            <i class="lni lni-trash"></i>
+                        </a>
+                    </td>
+                `;
+                tableBody.appendChild(newRow);
+                itemCount++;
+            });
+    
+            removeItemButtons.forEach((button) => {
+                button.addEventListener("click", (event) => {
+                    event.preventDefault();
+                    const row = button.closest("tr");
+                    row.remove();
+                });
+            });
+    
+            purchaseRequisitionForm.addEventListener("submit", (event) => {
+                event.preventDefault();
+                // Handle form submission using AJAX or submit the form normally
+                // For example, you can use fetch() or jQuery.ajax() to send the form data
+                // to the server and update the database records.
+            });
+        });
+    </script>
+    
+    
+    
+    </body>
+</html>

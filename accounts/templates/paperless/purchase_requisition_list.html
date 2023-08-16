@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block content %}
+<main class="main-wrapper">
+    <!-- ... header content ... -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">BSC Paperless</a>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ml-auto">
+                {% if user.is_authenticated %}
+                <li class="nav-item">
+                    <a class="nav-link">Logged in as {{ user.username }}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'accounts:user_logout' %}">Sign Out</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+    <section class="table-components">
+        <div class="tables-wrapper">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card-style mb-30">
+                        <h1 class="mb-10">Purchase Requisitions</h1>
+                        <p class="text-sm mb-20"></p>
+                        <div class="table-wrapper table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th><h6>User</h6></th>
+                                        <th><h6>Department</h6></th>
+                                        <th><h6>Reason for Request</h6></th>
+                                        <th><h6>Total Amount</h6></th>
+                                        <th><h6>Actions</h6></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for requisition in purchase_requisitions %}
+                                        <tr>
+                                            <td>{{ requisition.user.username }}</td>
+                                            <td>{{ requisition.department.name }}</td>
+                                            <td>{{ requisition.reason_for_request }}</td>
+                                            <td>{{ requisition.total_amount }}</td>
+                                            <td>
+                                                <a href="{% url 'accounts:purchase_requisition_detail' requisition.id %}" class="open-form-popup">View Details</a>
+                                                <a href="{% url 'accounts:remove_purchase_requisition' requisition.id %}" class="delete-action">Delete</a>
+                                                <a href="{% url 'accounts:print_purchase_requisition' requisition.id %}" class="print-action">Print</a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+{% endblock content %}

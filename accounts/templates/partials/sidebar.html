@@ -3,7 +3,7 @@
     <!-- ======== sidebar-nav start =========== -->
 <aside class="sidebar-nav-wrapper">
     <div class="navbar-logo">
-      <a href="{% url 'records:record_visitor' %}">
+      <a href="#">
         <img src="https://bsc.rw/wp-content/uploads/2023/01/BSC-High-res.-vector-logo-01@2x-1-160x69.png" alt="logo" />
       </a>
     </div>
@@ -29,25 +29,25 @@
           </a>
           <ul id="ddmenu_1" class="collapse show dropdown-nav">
             <!-- <li>
-              <a href="{% url 'records:overview' %}">Overview </a>
+              <a href="#">Overview </a>
             </li> -->
             {% if request.user.groups.all.0.name  == 'Security' or request.user.groups.all.0.name == 'Supervisor'  %}
             <li>
-              <a href="{% url 'records:record_visitor' %}" {% if request.path == "/record-visitor/" %} class="active" {% endif %}> Record Visitor </a>
+              <a href="#" {% if request.path == "/record-visitor/" %} class="active" {% endif %}> Record Visitor </a>
             </li>            
             <li>
-              <a href="{% url 'records:visitors' %}" {% if request.path == "/visitor-list/" %} class="active" {% endif %}> Waiting List </a>
+              <a href="#" {% if request.path == "/visitor-list/" %} class="active" {% endif %}> Waiting List </a>
             </li>
             <li>
-              <a href="{% url 'records:movements' %}" {% if request.path == "/movements/" %} class="active" {% endif %}> Movement </a>
+              <a href="#" {% if request.path == "/movements/" %} class="active" {% endif %}> Movement </a>
             </li>
             {% endif %}
             {% if request.user.groups.all.0.name == 'Supervisor'  %}
             <li>
-              <a href="{% url 'records:all_visitors' %}" {% if request.path == "/all-visitors/" %} class="active" {% endif %}> All Visitors </a>
+              <a href="#" {% if request.path == "/all-visitors/" %} class="active" {% endif %}> All Visitors </a>
             </li>
             <li>
-              <a href="{% url 'records:logs' %}" {% if request.path == "/logs/" %} class="active" {% endif %}> Logs </a>
+              <a href="#" {% if request.path == "/logs/" %} class="active" {% endif %}> Logs </a>
             </li>
             {% endif %}
           </ul>
