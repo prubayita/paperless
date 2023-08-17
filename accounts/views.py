@@ -96,6 +96,12 @@ def index(request):
 
 
 @login_required
+def workflow(request):
+    # workflow = PurchaseRequisition.objects.all()
+    return render(request, 'paperless/workflow.html', {'workflow': workflow})
+
+
+@login_required
 def purchase_requisition_list(request):
     purchase_requisitions = PurchaseRequisition.objects.all()
     return render(request, 'paperless/purchase_requisition_list.html', {'purchase_requisitions': purchase_requisitions})

@@ -8,6 +8,7 @@ app_name = 'accounts'
 urlpatterns = [
     path('', views.user_login, name='user_login'),
     path('registration/', views.index, name='registration'),
+    path('workflow/', views.workflow, name='workflow'),
     # URL patterns for purchase requisitions
     path('purchase-requisitions/', views.purchase_requisition_list, name='purchase_requisition_list'),
     path('purchase-requisitions/<int:pk>/', views.purchase_requisition_detail, name='purchase_requisition_detail'),
